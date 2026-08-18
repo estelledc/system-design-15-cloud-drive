@@ -198,9 +198,11 @@ test('two updates from one base produce one version and one durable 412 outcome'
   assert.equal(replay.currentVersionEtag, conflict.currentVersionEtag);
   const winnerBytes = applied === results[0] ? firstBytes : secondBytes;
   assert.ok((await service.readContent({ ownerToken, fileId: initial.fileId })).bytes.equals(winnerBytes));
+  const changedUpload = replayRequest === firstRequest ? secondUpload : firstUpload;
+  assert.notEqual(changedUpload, replayRequest.request.uploadId);
   await assert.rejects(service.updateFile({
     ...replayRequest,
-    request: { uploadId: applied === results[0] ? secondUpload : firstUpload },
+    request: { uploadId: changedUpload },
   }), RequestConflictError);
   const stats = await repository.stats();
   assert.equal(stats.versions, 2);
