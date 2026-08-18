@@ -2,23 +2,41 @@
 
 ## Current receipt
 
-The implementation is locally complete but has not yet been pushed in this phase. The current local-only evidence is 18 passing,
-0 failed, 0 skipped pure/filesystem/HTTP tests, JavaScript syntax checks, and a zero-exit `git diff --check`.
-
-Real PostgreSQL concurrency, process-crash recovery, benchmark values, exact Node releases, and dependency audit are deliberately
-listed as pending until the public GitHub Actions run exists. A source review or local mock cannot substitute for that result.
+Implementation commit `b6029a6ca58f02f8e5aa58c0b185fa0bc27272ae` is green in public GitHub Actions
+[run 32179087586](https://github.com/estelledc/system-design-15-cloud-drive/actions/runs/32179087586). The run completed on
+2026-08-19 CST with PostgreSQL 17.6 and exact Node releases 22.23.2, 24.19.0, and 26.7.0.
 
 | Gate | Current status | Evidence boundary |
 |---|---|---|
-| repository/syntax | locally checked; final static receipt pending complete docs | files, parsing, links, pins, portable paths, vocabulary |
-| pure/filesystem/HTTP tests | 18 passing, 0 failed, 0 skipped | validation, cursor corpus, CAS concurrency/readback, service and HTTP contracts |
-| PostgreSQL integration | pending public CI | real schema, transactions, row locks, concurrent outcomes |
-| process smoke | pending public CI | real process death/restart, response-loss replay, frozen page, tombstone |
-| dependency audit | pending public CI | current npm advisory database only |
-| bounded benchmark | pending public CI | raw exact fixture/runtime observations only |
+| repository/syntax | pass: 40 files, 20 JavaScript files, 12 Markdown files, 2 pinned actions | artifacts, parsing, links, pins, portable paths, vocabulary |
+| pure/filesystem/HTTP tests | 18 passing, 0 failed, 0 skipped on every runtime | validation, cursor corpus, CAS concurrency/readback, service and HTTP contracts |
+| PostgreSQL integration | 8 passing, 0 failed, 0 skipped on every runtime | real schema, transactions, row locks, concurrent outcomes |
+| process smoke | pass on every runtime | real process death/restart, response-loss replay, frozen page, tombstone |
+| dependency audit | `npm audit --audit-level=high`: 0 vulnerabilities | current npm advisory database only |
+| bounded benchmark | completed on every runtime; raw values below | raw exact fixture/runtime observations only |
 
-This section will be replaced with immutable commit/run receipts and raw matrix output after CI is green. “Pending” is not a
-pass claim.
+The first public implementation run at commit `ec7b475bacab787269746a85d443f9459df72d3f` is deliberately retained as
+[red run 32178955866](https://github.com/estelledc/system-design-15-cloud-drive/actions/runs/32178955866). All three runtimes
+proved seven of eight PostgreSQL tests and failed the changed-intent assertion. The test accidentally supplied the losing request's
+original upload again, so no conflict was correct. Commit `b6029a6ca58f02f8e5aa58c0b185fa0bc27272ae` selects the other upload
+and asserts the two IDs differ; no product behavior or acceptance criterion was weakened.
+
+## Process and benchmark receipts
+
+Every matrix smoke reported the same facts: both response-loss exits were `SIGKILL`; exact chunk replay returned `created=false`
+with final committed offset 150,000; exact file-create replay returned `receiptCreated=false`; there were four committed revisions;
+the frozen page excluded later revision 3 and its returned checkpoint included it; the stale outcome allocated no revision; the
+range response was `206` with `server_bytes_written`; later tombstone reads were denied; and device receipt/apply, convergence,
+and human-view claim counters were all zero.
+
+The benchmark input was fixed at one 524,288-byte source, 64 sequential 8,192-byte chunks, 50 sequential 2,048-byte version
+cycles, and 300 reads of one 51-row change page. These are raw hosted-runner observations, not capacity estimates:
+
+| Node | PostgreSQL | upload chunks/s | finalize ms | version cycles/s | change rows/s |
+|---|---:|---:|---:|---:|---:|
+| 22.23.2 | 17.6 | 237.280 | 23.501 | 60.804 | 19213.718 |
+| 24.19.0 | 17.6 | 250.489 | 18.469 | 75.335 | 21173.679 |
+| 26.7.0 | 17.6 | 256.574 | 21.005 | 68.278 | 19946.078 |
 
 ## Full gate
 
