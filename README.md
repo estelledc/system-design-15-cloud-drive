@@ -10,8 +10,9 @@ source chapter, or proprietary behavior. The problem contract was frozen before 
 ## Current phase
 
 - Closed-book problem contract: [docs/closed-book-contract.md](docs/closed-book-contract.md)
-- Fixed-source comparison: pending source review
-- Runnable slice and public CI: pending research and implementation
+- Fixed-source comparison: [docs/research-log.md](docs/research-log.md)
+- Architecture decision: [ADR 0001](docs/adr/0001-transactional-file-versions-and-bounded-change-pages.md)
+- Runnable slice and public CI: pending implementation
 
 ## Evidence boundary
 
