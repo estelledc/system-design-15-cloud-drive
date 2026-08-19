@@ -2,9 +2,12 @@
 
 ## Current receipt
 
-Implementation commit `b6029a6ca58f02f8e5aa58c0b185fa0bc27272ae` is green in public GitHub Actions
-[run 32179087586](https://github.com/estelledc/system-design-15-cloud-drive/actions/runs/32179087586). The run completed on
+The identity-safe rewrite preserved every existing tree, message, and timestamp while mapping the five commits in order: `de5539dd4a3e9a7f043592a9073fec15889afe61` → `5daf68c31fdffc301fbd4e2014278558ed8d86c8`, `4ec0273a0e35e535e908571f90983bfba6b9e9ff` → `d3773a32b8285bb0c32cd9a49e3da0938f945634`, `ec7b475bacab787269746a85d443f9459df72d3f` → `a50125b5bd0eb79f3a9686a77b07a614f055b6b6`, `b6029a6ca58f02f8e5aa58c0b185fa0bc27272ae` → `0eadcf3547e8d6d0e38ea96114b89f7c0a963cc7`, and `6abc5d2fc058ce48afdc67de2ccc63ade4904d82` → `87703fdd05125e50fdb85ac5c6cb9feafedad417`.
+
+Implementation commit `0eadcf3547e8d6d0e38ea96114b89f7c0a963cc7` is green in the tree-equivalent historical pre-rewrite GitHub Actions [run 32179087586](https://github.com/estelledc/system-design-15-cloud-drive/actions/runs/32179087586). The run remains bound to the old commit object and completed on
 2026-08-19 CST with PostgreSQL 17.6 and exact Node releases 22.23.2, 24.19.0, and 26.7.0.
+
+Current reachable `main` uses the repository owner's GitHub noreply identity. Rewritten baseline `87703fdd05125e50fdb85ac5c6cb9feafedad417` passed [CI run 32226161955](https://github.com/estelledc/system-design-15-cloud-drive/actions/runs/32226161955) on Node 22, 24, and 26 with PostgreSQL 17.6 and the full quality gate.
 
 | Gate | Current status | Evidence boundary |
 |---|---|---|
@@ -15,10 +18,10 @@ Implementation commit `b6029a6ca58f02f8e5aa58c0b185fa0bc27272ae` is green in pub
 | dependency audit | `npm audit --audit-level=high`: 0 vulnerabilities | current npm advisory database only |
 | bounded benchmark | completed on every runtime; raw values below | raw exact fixture/runtime observations only |
 
-The first public implementation run at commit `ec7b475bacab787269746a85d443f9459df72d3f` is deliberately retained as
+The first public implementation run at tree-equivalent commit `a50125b5bd0eb79f3a9686a77b07a614f055b6b6` is deliberately retained as
 [red run 32178955866](https://github.com/estelledc/system-design-15-cloud-drive/actions/runs/32178955866). All three runtimes
 proved seven of eight PostgreSQL tests and failed the changed-intent assertion. The test accidentally supplied the losing request's
-original upload again, so no conflict was correct. Commit `b6029a6ca58f02f8e5aa58c0b185fa0bc27272ae` selects the other upload
+original upload again, so no conflict was correct. Commit `0eadcf3547e8d6d0e38ea96114b89f7c0a963cc7` selects the other upload
 and asserts the two IDs differ; no product behavior or acceptance criterion was weakened.
 
 ## Process and benchmark receipts
